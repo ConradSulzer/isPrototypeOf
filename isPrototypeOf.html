@@ -1,0 +1,63 @@
+<script src="simpletest.js"></script>
+<script>
+
+// Function:
+
+function isProtoOf(protoObj, objSearched) {
+    var bool = '';
+
+    if(objSearched === undefined || objSearched === null) {
+        return false;
+    }
+
+    var retrievedProto = Object.getPrototypeOf(objSearched);
+    
+    if(retrievedProto === protoObj){
+        bool = true;
+        
+    }else if(retrievedProto === null || undefined) {
+        bool = false;
+        
+    }else{
+        bool = isProtoOf(protoObj, retrievedProto);
+    }
+    
+    return bool;
+}
+
+//Sample Code for testing:
+
+var canine = {
+  bark: function() {
+    console.log('bark');
+  }
+};
+
+var dog = Object.create(canine);
+dog.fetch = function() {
+  console.log('fetch');
+};
+
+var myDog = Object.create(dog);
+var empty = Object.create(null);
+
+// Test:
+
+tests({
+
+    'It should check if an object exists in another object\'s prototype chain and return a Boolean value.': function() {
+        eq(isProtoOf(canine, dog), true);
+        eq(isProtoOf(empty, dog), false);
+    },
+    
+    'It should work for multiple prototype links': function() {
+        eq(isProtoOf(canine, myDog), true);
+	},
+
+    'it should always return true if the search prototype is Object.prototype and a valid object is presented for searching': function() {
+        eq(isProtoOf(Object.prototype, myDog), true);
+    },
+    
+});
+
+</script>
